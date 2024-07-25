@@ -8,6 +8,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterBuyerRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 class AuthenticationController extends Controller
 {
@@ -61,7 +62,11 @@ class AuthenticationController extends Controller
             ], 401);
         }
 
-        $token = $user->createToken('token_auth')->plainTextToken;
+        //save and update last_login_at
+        $user->last_login_at = Carbon::now();
+        $user->save();
+
+        $token = $user->createToken('token')->plainTextToken;
 
         return response()->json([
             'status' => 'success',
@@ -81,7 +86,7 @@ class AuthenticationController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'logged out and token revoked'
-        ], 204);
+        ], 200);
     }
 
     //register buyer
