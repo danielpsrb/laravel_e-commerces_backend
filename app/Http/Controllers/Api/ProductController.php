@@ -21,6 +21,24 @@ class ProductController extends Controller
         ]);
     }
 
+    // Get product by id
+    public function show(Request $request, $id)
+    {
+        $product = Product::where('seller_id', $request->user()->id)->where('id', $id)->with('seller')->first();
+        if (!$product) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product',
+            'data' => $product,
+        ]);
+    }
+
     // Store product
     public function store(Request $request)
     {
